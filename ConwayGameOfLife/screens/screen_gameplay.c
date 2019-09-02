@@ -44,6 +44,7 @@ static int numSquareCols = 0;
 static int numSquareRows = 0;
 static bool* pDrawArray = NULL;
 
+static bool inSimulation = false;
 
 //----------------------------------------------------------------------------------
 // Gameplay Screen Functions Definition
@@ -52,7 +53,6 @@ static bool* pDrawArray = NULL;
 // Gameplay Screen Initialization logic
 void InitGameplayScreen(void)
 {
-    // Initialize GAMEPLAY screen variables here!
     framesCounter = 0;
     finishScreen = 0;
 	offset.x = screenWidth % SQUARE_SIZE;
@@ -64,18 +64,42 @@ void InitGameplayScreen(void)
 	pDrawArray = (bool*)malloc(numSquareRows * numSquareCols * sizeof(bool));
 	//if ((bool *) NULL == pDrawArray)
 		//log error
+
+	inSimulation = false;
 }
 
 // Gameplay Screen Update logic
 void UpdateGameplayScreen(void)
 {
-	if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+	// Seeding Life
+	//
+	if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && false == inSimulation)
 	{
 		mousePoint = GetMousePosition();
 		int row = mousePoint.y / SQUARE_SIZE;
 		int col = mousePoint.x / SQUARE_SIZE;
 		*(pDrawArray + row * numSquareCols + col) = true;
 	}
+
+	// Simulating Life
+	//
+	if (inSimulation)
+	{
+		// Exit Simulation
+		//
+		if (IsKeyPressed(KEY_ENTER))
+		{
+			finishScreen = true;
+			inSimulation = false;
+		}
+
+
+	}
+
+	// Start Simulation
+	//
+	if (IsKeyPressed(KEY_ENTER) && false == inSimulation)
+		inSimulation = true;
 }
 
 // Gameplay Screen Draw logic
