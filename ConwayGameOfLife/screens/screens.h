@@ -36,6 +36,10 @@ typedef enum GameScreen { LOGO = 0, TITLE, OPTIONS, GAMEPLAY, ENDING } GameScree
 //----------------------------------------------------------------------------------
 GameScreen currentScreen;
 
+//----------------------------------------------------------------------------------
+// Defines
+//----------------------------------------------------------------------------------
+#define SQUARE_SIZE 31
 #define GAME_OF_LIFE "Game of Life"
 
 #ifdef __cplusplus

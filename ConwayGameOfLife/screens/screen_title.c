@@ -54,8 +54,8 @@ void UpdateTitleScreen(void)
     // Press enter or tap to change to GAMEPLAY screen
     if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP))
     {
-        finishScreen = 1;   // OPTIONS
-        //finishScreen = 2;   // GAMEPLAY
+        //finishScreen = 1;   // OPTIONS
+        finishScreen = 2;   // GAMEPLAY
     }
 }
 
@@ -65,7 +65,7 @@ void DrawTitleScreen(void)
     // TODO: Draw TITLE screen here!
     DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), BLACK);
 	DrawText(GAME_OF_LIFE, 120, 220, 40, WHITE);
-    //DrawText("PRESS ENTER or TAP to JUMP to GAMEPLAY SCREEN", 120, 220, 20, DARKGREEN);
+    DrawText("PRESS ENTER or TAP to seed life", 220, 320, 20, LIGHTGRAY);
 }
 
 // Title Screen Unload logic

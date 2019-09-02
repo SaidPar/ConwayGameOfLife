@@ -30,9 +30,20 @@
 // Global Variables Definition (local to this module)
 //----------------------------------------------------------------------------------
 
-// Gameplay screen global variables
+static const int screenWidth = 800;
+static const int screenHeight = 450;
+
 static int framesCounter;
 static int finishScreen;
+
+static Vector2 offset = { 0 };
+static Vector2 mousePoint = { 0.0f, 0.0f };
+static Vector2 squareVector = { SQUARE_SIZE, SQUARE_SIZE };
+
+static int numSquareCols = 0;
+static int numSquareRows = 0;
+static bool* pDrawArray = NULL;
+
 
 //----------------------------------------------------------------------------------
 // Gameplay Screen Functions Definition
@@ -41,45 +52,72 @@ static int finishScreen;
 // Gameplay Screen Initialization logic
 void InitGameplayScreen(void)
 {
-    // TODO: Initialize GAMEPLAY screen variables here!
+    // Initialize GAMEPLAY screen variables here!
     framesCounter = 0;
     finishScreen = 0;
+	offset.x = screenWidth % SQUARE_SIZE;
+	offset.y = screenHeight % SQUARE_SIZE;
+
+	// Allocate draw array
+	numSquareCols = screenWidth / SQUARE_SIZE + 1;
+	numSquareRows = screenHeight / SQUARE_SIZE + 1;
+	pDrawArray = (bool*)malloc(numSquareRows * numSquareCols * sizeof(bool));
+	//if ((bool *) NULL == pDrawArray)
+		//log error
 }
 
 // Gameplay Screen Update logic
 void UpdateGameplayScreen(void)
 {
-    // TODO: Update GAMEPLAY screen variables here!
-
-    // Press enter or tap to change to ENDING screen
-    if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP))
-    {
-        finishScreen = 1;
-    }
+	if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+	{
+		mousePoint = GetMousePosition();
+		int row = mousePoint.y / SQUARE_SIZE;
+		int col = mousePoint.x / SQUARE_SIZE;
+		*(pDrawArray + row * numSquareCols + col) = true;
+	}
 }
 
 // Gameplay Screen Draw logic
 void DrawGameplayScreen(void)
 {
-    // TODO: Draw GAMEPLAY screen here!
     DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), BLACK);
 
 	// Draw grid lines
-	/*for (int i = 0; i < screenWidth / SQUARE_SIZE + 1; i++)
+	for (int i = 0; i < screenWidth / SQUARE_SIZE + 1; i++)
 	{
-		DrawLineV((Vector2) { SQUARE_SIZE* i + offset.x / 2, offset.y / 2 }, (Vector2) { SQUARE_SIZE* i + offset.x / 2, screenHeight - offset.y / 2 }, LIGHTGRAY);
+		DrawLineV(	(Vector2) { SQUARE_SIZE * i + offset.x / 2, offset.y / 2 }, 
+					(Vector2) { SQUARE_SIZE * i + offset.x / 2, screenHeight - offset.y / 2 }, 
+					LIGHTGRAY);
 	}
 
 	for (int i = 0; i < screenHeight / SQUARE_SIZE + 1; i++)
 	{
-		DrawLineV((Vector2) { offset.x / 2, SQUARE_SIZE * i + offset.y / 2 }, (Vector2) { screenWidth - offset.x / 2, SQUARE_SIZE * i + offset.y / 2 }, LIGHTGRAY);
-	}*/
+		DrawLineV(	(Vector2) { offset.x / 2, SQUARE_SIZE * i + offset.y / 2 }, 
+					(Vector2) { screenWidth - offset.x / 2, SQUARE_SIZE * i + offset.y / 2 }, 
+					LIGHTGRAY);
+	}
+	
+	for (int row = 0; row < numSquareRows; row++)
+	{
+		for (int col = 0; col < numSquareCols; col++)
+		{
+			if (*(pDrawArray + row * numSquareCols + col) == true)
+			{
+				Vector2 squarePos = { SQUARE_SIZE * col + offset.x / 2, SQUARE_SIZE * row + offset.y / 2 };
+				DrawRectangleV(squarePos, squareVector, WHITE);
+			}
+		}
+	}
+		
+	
 }
 
 // Gameplay Screen Unload logic
 void UnloadGameplayScreen(void)
 {
     // TODO: Unload GAMEPLAY screen variables here!
+	free(pDrawArray);
 }
 
 // Gameplay Screen should finish?
