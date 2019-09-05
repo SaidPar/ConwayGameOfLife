@@ -43,6 +43,7 @@ static Vector2 squareVector = { SQUARE_SIZE, SQUARE_SIZE };
 static int numSquareCols = 0;
 static int numSquareRows = 0;
 static bool* pDrawArray = NULL;
+static bool* pLastIteration = NULL;
 
 static bool inSimulation = false;
 
@@ -65,6 +66,10 @@ void InitGameplayScreen(void)
 	//if ((bool *) NULL == pDrawArray)
 		//log error
 
+	pLastIteration = (bool*)malloc(numSquareRows * numSquareCols * sizeof(bool));
+	//if ((bool *) NULL == pLastIteration)
+		//log error
+
 	inSimulation = false;
 }
 
@@ -81,6 +86,7 @@ void UpdateGameplayScreen(void)
 		*(pDrawArray + row * numSquareCols + col) = true;
 	}
 
+
 	// Simulating Life
 	//
 	if (inSimulation)
@@ -92,9 +98,15 @@ void UpdateGameplayScreen(void)
 			finishScreen = true;
 			inSimulation = false;
 		}
-
-
+		else
+		{
+			if (framesCounter % 15 == 0)
+			{
+				SimulateLife();
+			}
+		}
 	}
+	framesCounter++;
 
 	// Start Simulation
 	//
@@ -137,11 +149,147 @@ void DrawGameplayScreen(void)
 	
 }
 
+void SimulateLife(void)
+{
+	bool* pTmp = pLastIteration;
+	pLastIteration = pDrawArray;
+	pDrawArray = pTmp;
+
+	for (int row = 0; row < numSquareRows; row++)
+	{
+		for (int col = 0; col < numSquareCols; col++)
+		{
+			int neighborCount = GetNeighborCount(pLastIteration, row, col);
+
+			bool* pCurrent = (pLastIteration + row * numSquareCols + col);
+			bool* pCurrentDraw = (pDrawArray + row * numSquareCols + col);
+			if (*pCurrent == true)
+			{
+				// if alive
+				switch (neighborCount)
+				{
+				case 0:
+				case 1:
+					// cell dies
+					*pCurrentDraw = false;
+					break;
+
+				case 2:
+				case 3:
+					// cell lives to next generation
+					*pCurrentDraw = true;
+					break;
+
+				case 4:
+				default:
+					// cell dies from overpopulation
+					*pCurrentDraw = false;
+					break;
+				}
+			} // end if alive
+			else
+			{
+				// if dead
+				switch (neighborCount)
+				{
+				case 3:
+					// becomes alive as if by reproduction
+					*pCurrentDraw = true;
+					break;
+
+				default:
+					*pCurrentDraw = *pCurrent;
+				}
+			} // end if dead
+		} // end for cols
+	} // end for rows
+}
+
+int GetNeighborCount(bool* pSquareArray, int row, int col)
+{
+	int neighborCount = 0;
+
+	// East Neighbor
+	//
+	if (col > 0)
+	{
+		bool* pNeighbor = (pSquareArray + row * numSquareCols + (col - 1));
+		if (*pNeighbor == true)
+			neighborCount++;
+	}
+
+	// NorthEast Neighbor
+	//
+	if (col > 0 && row > 0)
+	{
+		bool* pNeighbor = (pSquareArray + (row - 1) * numSquareCols + (col - 1));
+		if (*pNeighbor == true)
+			neighborCount++;
+	}
+
+	// North Neighbor
+	//
+	if (row > 0)
+	{
+		bool* pNeighbor = (pSquareArray + (row - 1) * numSquareCols + col);
+		if (*pNeighbor == true)
+			neighborCount++;
+	}
+
+	// NorthWest Neighbor
+	//
+	if (row > 0 && col < numSquareCols)
+	{
+		bool* pNeighbor = (pSquareArray + (row - 1) * numSquareCols + (col + 1));
+		if (*pNeighbor == true)
+			neighborCount++;
+	}
+
+	// West Neighbor
+	//
+	if (col < numSquareCols)
+	{
+		bool* pNeighbor = (pSquareArray + row * numSquareCols + (col + 1));
+		if (*pNeighbor == true)
+			neighborCount++;
+	}
+
+	// SouthWest Neighbor
+	//
+	if (row < numSquareRows && col < numSquareCols)
+	{
+		bool* pNeighbor = (pSquareArray + (row + 1) * numSquareCols + (col + 1));
+		if (*pNeighbor == true)
+			neighborCount++;
+	}
+	
+	// South Neighbor
+	//
+	if (row < numSquareRows)
+	{
+		bool* pNeighbor = (pSquareArray + (row + 1) * numSquareCols + col);
+		if (*pNeighbor == true)
+			neighborCount++;
+	}
+
+	// SouthEast Neighbor
+	//
+	if (row < numSquareRows && col > 0)
+	{
+		bool* pNeighbor = (pSquareArray + (row + 1) * numSquareCols + (col - 1));
+		if (*pNeighbor == true)
+			neighborCount++;
+	}
+
+	return neighborCount;
+}
+
 // Gameplay Screen Unload logic
 void UnloadGameplayScreen(void)
 {
     // TODO: Unload GAMEPLAY screen variables here!
 	free(pDrawArray);
+	free(pLastIteration);
 }
 
 // Gameplay Screen should finish?

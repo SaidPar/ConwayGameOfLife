@@ -82,6 +82,9 @@ void DrawGameplayScreen(void);
 void UnloadGameplayScreen(void);
 int FinishGameplayScreen(void);
 
+void SimulateLife(void);
+int GetNeighborCount(bool* pSquareArray, int row, int col);
+
 //----------------------------------------------------------------------------------
 // Ending Screen Functions Declaration
 //----------------------------------------------------------------------------------
