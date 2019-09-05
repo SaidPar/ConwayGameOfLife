@@ -62,9 +62,9 @@ void UpdateEndingScreen(void)
 void DrawEndingScreen(void)
 {
     // TODO: Draw ENDING screen here!
-    DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), BLUE);
-    DrawText("ENDING SCREEN", 20, 20, 40, DARKBLUE);
-    DrawText("PRESS ENTER to RETURN to TITLE SCREEN", 120, 220, 20, DARKBLUE);
+    DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), WHITE);
+    DrawText("EL FIN", 20, 20, 40, BLACK);
+    DrawText("PRESS ENTER to RETURN to TITLE SCREEN", 120, 220, 20, LIGHTGRAY);
 }
 
 // Ending Screen Unload logic

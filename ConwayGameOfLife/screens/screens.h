@@ -39,7 +39,7 @@ GameScreen currentScreen;
 //----------------------------------------------------------------------------------
 // Defines
 //----------------------------------------------------------------------------------
-#define SQUARE_SIZE 31
+#define SQUARE_SIZE 25
 #define GAME_OF_LIFE "Game of Life"
 
 #ifdef __cplusplus
